@@ -63,13 +63,10 @@ BUILDLOG="${OUTDIR}/build-${CODENAME}-${DEVICES}.log"
 # Download tool
 git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}-${TARGET_ROM}" ${ZIP_DIR}
  
-if [ $USECLANG -eq 1 ]; then
-    git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-5696680 "${TOOLDIR}/clang"
-    TOOL_VERSION=$("${TOOLDIR}/clang/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-elif [ $USECLANG -eq 2 ]; then 
+if [ $USECLANG -eq 1 ]; then 
     git clone https://github.com/NusantaraDevs/clang.git --depth=1 -b dev/10.0 "${TOOLDIR}/clang10"
     TOOL_VERSION=$("${TOOLDIR}/clang10/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-elif [ $USECLANG -eq 3 ]; then 
+elif [ $USECLANG -eq 2 ]; then 
     git clone https://github.com/Haseo97/Clang-10.0.0 --depth=1 "${TOOLDIR}/clang10"
     TOOL_VERSION=$("${TOOLDIR}/clang10/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 fi
