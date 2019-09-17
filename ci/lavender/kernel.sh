@@ -12,7 +12,6 @@ export KERNEL_VERSION
 export TYPE_KERNEL
 export CODENAME
 export TARGET_ROM
-export COMPILER
 export USECLANG
  
 KERNEL_NAME="aLn"
@@ -28,9 +27,8 @@ HOST="n00b_lavender-Dev"
 # 1 = GNU 8.3
 # USECLANG
 # 0
-# 1 = CLANG 9.0.5 
-# 2 = CLANG 10 
-# 3 = DRAGONTC 
+# 1 = CLANG 10 from NusantaraDev
+# 2 = CLANG 10 from Haseo
 
 JOBS="-j$(($(nproc --all) + 4))"
  
@@ -44,13 +42,10 @@ if [ ! $TYPE_KERNEL ]; then
    TYPE_KERNEL="HMP"
 fi
 if [ ! $CODENAME ]; then
-   CODENAME="EAS"
+   CODENAME="Testing"
 fi
 if [ ! $TARGET_ROM ]; then
    TARGET_ROM="aosp"
-fi
-if [ ! $COMPILER ]; then
-   COMPILER=0
 fi
 if [ ! $USECLANG ]; then
    USECLANG=0
@@ -67,33 +62,6 @@ BUILDLOG="${OUTDIR}/build-${CODENAME}-${DEVICES}.log"
  
 # Download tool
 git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}-${TARGET_ROM}" ${ZIP_DIR}
-
-if [[ $COMPILER -eq 0 ]]; then
-    TOOLCHAIN32="${TOOLDIR}/stock32"
-    TOOLCHAIN64="${TOOLDIR}/stock64"
-    CC="aarch64-linux-android-"
-    CC_ARM32="arm-linux-androideabi-"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r39 --depth=1 "${TOOLCHAIN32}"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r39 --depth=1 "${TOOLCHAIN64}"
-    TOOL_VERSION=$("${TOOLCHAIN64}/bin/${CC}gcc" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-elif [[ $COMPILER -eq 1 ]]; then
-    if [[ ! -d ${TOOLDIR}/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabi && ! -d ${TOOLDIR}/gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu ]]; then
-        mkdir ${TOOLDIR}
-        cd ${TOOLDIR}
-        curl -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/8.3-2019.03/binrel/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabi.tar.xz
-        tar xvf *.tar.xz
-        rm *.tar.xz
-        curl -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/8.3-2019.03/binrel/gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu.tar.xz
-        tar xvf *.tar.xz
-        rm *.tar.xz
-        cd ${KERNELDIR}
-    fi
-    TOOLCHAIN32="${TOOLDIR}/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabi"
-    TOOLCHAIN64="${TOOLDIR}/gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu"
-    CC="aarch64-linux-gnu-"
-    CC_ARM32="arm-linux-gnueabi-"
-    TOOL_VERSION=$("${TOOLCHAIN64}/bin/${CC}gcc" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-fi
  
 if [ $USECLANG -eq 1 ]; then
     git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-5696680 "${TOOLDIR}/clang"
@@ -101,14 +69,9 @@ if [ $USECLANG -eq 1 ]; then
 elif [ $USECLANG -eq 2 ]; then 
     git clone https://github.com/NusantaraDevs/clang.git --depth=1 -b dev/10.0 "${TOOLDIR}/clang10"
     TOOL_VERSION=$("${TOOLDIR}/clang10/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-
-elif [ $USECLANG -eq 4 ]; then 
+elif [ $USECLANG -eq 3 ]; then 
     git clone https://github.com/Haseo97/Clang-10.0.0 --depth=1 "${TOOLDIR}/clang10"
     TOOL_VERSION=$("${TOOLDIR}/clang10/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-
-elif [ $USECLANG -eq 3]; then
-    git clone --depth=1 https://github.com/NusantaraDevs/DragonTC "${TOOLDIR}/clang"
-    TOOL_VERSION=$("${TOOLDIR}/clang/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 fi
  
 # Telegram Function
@@ -206,7 +169,7 @@ BUILD_START=$(date +"%s")
 DATE=`date`
  
 sendInfo "<b>---- aLn New Kernel ----</b>" \
-    "<b>Device:</b>lavender or Redmi Note 7" \
+    "<b>Device:</b> lavender or Redmi Note 7" \
     "<b>Version:</b> <code>${KVERSION}</code>" \
     "<b>Kernel Version:</b> <code>$(make kernelversion)</code>" \
     "<b>Type:</b> <code>${TYPE_KERNEL}</code>" \
@@ -216,32 +179,6 @@ sendInfo "<b>---- aLn New Kernel ----</b>" \
     "<b>Started at</b> <code>$DATE</code>"
  
 clean_outdir
- 
-function compile() {
-    PATH="${TOOLCHAIN64}/bin:${PATH}:${TOOLCHAIN32}/bin:${PATH}"
-    make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
-    make -j$(nproc --all) O="${OUTDIR}" \
-                          ARCH=arm64 \
-                          CROSS_COMPILE=aarch64-linux-android- \
-                          CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-                          LOCALVERSION="-${KVERSION}" \
-                          KBUILD_BUILD_USER="${DEVELOPER}" \
-                          KBUILD_BUILD_HOST="${HOST}"
-}
- 
-function compile_clang() {
-    PATH="${TOOLDIR}/clang/bin:${TOOLCHAIN64}/bin:${PATH}:${TOOLCHAIN32}/bin:${PATH}"
-    make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
-    make -j$(nproc --all) O="${OUTDIR}" \
-                          ARCH=arm64 \
-                          CC=clang \
-                          CLANG_TRIPLE=aarch64-linux-gnu- \
-                          CROSS_COMPILE=aarch64-linux-android- \
-                          CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-                          LOCALVERSION="-${KVERSION}" \
-                          KBUILD_BUILD_USER="${DEVELOPER}" \
-                          KBUILD_BUILD_HOST="${HOST}"
-}
 
 function compile_clang10() {
     LD_LIBRARY_PATH="${TOOLDIR}/clang10/bin/../lib:$PATH"
@@ -258,14 +195,8 @@ function compile_clang10() {
 #                          KBUILD_COMPILER_STRING="${TOOL_VERSION}"
 }
 
-if [ $USECLANG -eq 0 ]; then
-    compile 2>&1 | tee "${BUILDLOG}"
-elif [[ $USECLANG -eq 1 || $USECLANG -eq 3 ]]; then
-    compile_clang 2>&1 | tee "${BUILDLOG}"
-elif [[ $USECLANG -eq 2 || $USECLANG -eq 4 ]]; then
-    compile_clang10 2>&1 | tee "${BUILDLOG}"
-fi
- 
+compile_clang10 2>&1 | tee "${BUILDLOG}"
+
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
  
