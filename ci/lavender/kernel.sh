@@ -188,8 +188,8 @@ function compile_clang10() {
                           CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
                           LOCALVERSION="-${KVERSION}" \
                           KBUILD_BUILD_USER="${DEVELOPER}" \
-                          KBUILD_BUILD_HOST="${HOST}" 
-#                          KBUILD_COMPILER_STRING="${TOOL_VERSION}"
+                          KBUILD_BUILD_HOST="${HOST}" \
+                          KBUILD_COMPILER_STRING="${TOOL_VERSION}"
 }
 
 compile_clang10 2>&1 | tee "${BUILDLOG}"
