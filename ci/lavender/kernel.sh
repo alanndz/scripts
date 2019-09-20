@@ -20,8 +20,9 @@ DEVICES="lavender"
 TARGET_ARCH=arm64
 DEVELOPER="alanndz"
 HOST="n00b_lavender-Dev"
- 
- 
+
+export TZ=":Asia/Makassar"
+
 # COMPILER
 # 0 = STOCK 4.9
 # 1 = GNU 8.3
