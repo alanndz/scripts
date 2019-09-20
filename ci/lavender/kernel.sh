@@ -168,7 +168,7 @@ DATE=`date`
  
 sendInfo "<b>---- aLn New Kernel ----</b>" \
     "<b>Device:</b> lavender or Redmi Note 7" \
-    "<b>Version:</b> <code>${KVERSION}</code>" \
+    "<b>Name:</b> <code>aLn-${KVERSION}</code>" \
     "<b>Kernel Version:</b> <code>$(make kernelversion)</code>" \
     "<b>Type:</b> <code>${TYPE_KERNEL}</code>" \
     "<b>Commit:</b> <code>$(git log --pretty=format:'%h : %s' -1)</code>" \
