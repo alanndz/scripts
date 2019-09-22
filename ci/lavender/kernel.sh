@@ -178,8 +178,9 @@ sendInfo "<b>---- aLn New Kernel ----</b>" \
  
 clean_outdir
 
+export LD_LIBRARY_PATH="${TOOLDIR}/clang10/bin/../lib:$PATH"
+
 function compile_clang10() {
-    LD_LIBRARY_PATH="${TOOLDIR}/clang10/bin/../lib:$PATH"
     make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
     make -j$(nproc --all) O="${OUTDIR}" \
                           ARCH=arm64 \
