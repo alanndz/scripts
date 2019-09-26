@@ -59,7 +59,6 @@ TOOLDIR=$KERNELDIR/.ToolBuild
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
-BUILDLOG="${OUTDIR}/build-${CODENAME}-${DEVICES}.log"
  
 # Download tool
 git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}-${TARGET_ROM}" ${ZIP_DIR}
@@ -100,7 +99,9 @@ function sendLog() {
 }
  
 #####
- 
+
+BUILDLOG="${OUTDIR}/build-${CODENAME}-${DEVICES}-$(date "+%H%M-%d%m%Y").log"
+
 if [ $RELEASE_STATUS -eq 1 ]; then
 	if [ "${CODENAME}" ]; then
 		KVERSION="${CODENAME}-${KERNEL_VERSION}"
