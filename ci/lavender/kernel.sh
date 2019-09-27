@@ -52,7 +52,7 @@ fi
 if [ ! $USECLANG ]; then
    USECLANG=0
 fi
-if [ $USECACHE -eq 1 ]: then
+if [ $USECACHE -eq 1 ]; then
     export PATH=/usr/lib/ccache:$PATH
     CC+="ccache "
     CLANG_TRIPLE+="ccache "
