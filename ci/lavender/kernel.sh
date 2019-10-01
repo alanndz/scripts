@@ -190,6 +190,7 @@ export LD_LIBRARY_PATH="${TOOLDIR}/clang10/bin/../lib:$PATH"
 
 function compile_clang10() {
     make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
+    PATH="${TOOLDIR}/clang10/bin:${PATH}" \
     make -j$(nproc --all) O="${OUTDIR}" \
                           ARCH=arm64 \
                           CC+=clang \
