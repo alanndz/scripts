@@ -141,28 +141,6 @@ function clean_outdir() {
     rm -rf ${OUTDIR}/*
 }
  
-MODULEDIR="${ZIP_DIR}/modules/vendor/lib/modules/"
-PRONTO="${MODULEDIR}pronto/pronto_wlan.ko"
-STRIP="${TOOLCHAIN64}/bin/$(echo "$(find "${TOOLCHAIN64}/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
-			sed -e 's/gcc/strip/')"
- 
-function strip_module () {
-	# thanks to @adekmaulana
-	for MOD in $(find "${OUTDIR}" -name '*.ko') ; do
-		"${STRIP}" --strip-unneeded --strip-debug "${MOD}" #&>/dev/null
-		"${KERNELDIR}/"/scripts/sign-file sha512 \
-				"${OUTDIR}/signing_key.priv" \
-				"${OUTDIR}/signing_key.x509" \
-				"${MOD}"
-		find "${OUTDIR}" -name '*.ko' -exec cp {} "${MODULEDIR}" \;
-		case ${MOD} in
-			*/wlan.ko)
-				cp -ar "${MOD}" "${PRONTO}"
-		esac
-	done
-	echo -e "\n(i) Done moving modules"
-}
- 
 BUILD_START=$(date +"%s")
 DATE=`date`
  
@@ -199,12 +177,6 @@ compile_clang10 2>&1 | tee "${BUILDLOG}"
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
- 
-if [ "${TARGET_ROM}" == "miui" ]; then
-    cd ${ZIP_DIR}/
-    make clean &>/dev/null
-    strip_module
-fi
  
 if [ -d ${KERNELDIR}/patch ]; then
     cp -rf ${KERNELDIR}/patch ${ZIP_DIR}/
