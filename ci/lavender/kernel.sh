@@ -13,8 +13,7 @@ export TYPE_KERNEL
 export CODENAME
 export TARGET_ROM
 export USECLANG
-export USECACHE
-
+ 
 KERNEL_NAME="aLn"
 CONFIG_FILE="lavender_defconfig"
 DEVICES="lavender"
@@ -51,13 +50,6 @@ if [ ! $TARGET_ROM ]; then
 fi
 if [ ! $USECLANG ]; then
    USECLANG=0
-fi
-if [ $USECACHE -eq 1 ]; then
-    export PATH=/usr/lib/ccache:$PATH
-    CC+="ccache "
-    CLANG_TRIPLE+="ccache "
-    CROSS_COMPILE+="ccache "
-    CROSS_COMPILE_ARM32+="ccache "
 fi
 
 # Location of Toolchain
@@ -193,10 +185,10 @@ function compile_clang10() {
     PATH="${TOOLDIR}/clang10/bin:${PATH}" \
     make -j$(nproc --all) O="${OUTDIR}" \
                           ARCH=arm64 \
-                          CC+=clang \
-                          CLANG_TRIPLE+=aarch64-linux-gnu- \
-                          CROSS_COMPILE+=aarch64-linux-gnu- \
-                          CROSS_COMPILE_ARM32+=arm-linux-gnueabi- \
+                          CC=clang \
+                          CLANG_TRIPLE=aarch64-linux-gnu- \
+                          CROSS_COMPILE=aarch64-linux-gnu- \
+                          CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
                           LOCALVERSION="-${KVERSION}" \
                           KBUILD_BUILD_USER="${DEVELOPER}" \
                           KBUILD_BUILD_HOST="${HOST}"
