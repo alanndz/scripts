@@ -75,8 +75,8 @@ TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(htt
 # Telegram Function
 BOT_API_KEY=$(openssl enc -base64 -d <<< Nzk5MDU4OTY3OkFBRlpjVEM5SU9lVEt4YkJucHVtWG02VHlUOTFzMzU5Y3VVCg==)
 CHAT_ID=$(openssl enc -base64 -d <<< LTEwMDEyMzAyMDQ5MjMK)
-export BUILD_FAIL="CAADBQAD5xsAAsZRxhW0VwABTkXZ3wcC"
-export BUILD_SUCCESS="CAADBQADeQAD9kkAARtA3tu3hLOXJwI"
+export BUILD_FAIL="CAADBQADgAADWtMDKOYIp0Kd\_F0\_FgQ"
+export BUILD_SUCCESS="CAADBQADXgADWtMDKLZjh6sbUrFbFgQ"
  
 function sendInfo() {
     curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d chat_id=$CHAT_ID -d "parse_mode=HTML" -d text="$(
