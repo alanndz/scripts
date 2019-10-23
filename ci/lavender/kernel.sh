@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+b#!/usr/bin/env bash
 #
 # Copyright (C) 2019 @alanndz (Telegram and Github)
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -18,7 +18,7 @@ KERNEL_NAME="aLn"
 CONFIG_FILE="lavender_defconfig"
 DEVICES="lavender"
 TARGET_ARCH=arm64
- 8DEVELOPER="alanndz"
+DEVELOPER="alanndz"
 HOST="n00b_lavender-Dev"
 
 export TZ=":Asia/Makassar"
