@@ -31,7 +31,7 @@ export TZ=":Asia/Makassar"
 # 1 = CLANG 10 from NusantaraDev
 # 2 = CLANG 10 from Haseo
 
-JOBS="-j$(($(nproc --all) + 4))"
+JOBS="-j4"
  
 if [ ! $RELEASE_STATUS ]; then
    RELEASE_STATUS=0
@@ -163,7 +163,7 @@ export LD_LIBRARY_PATH="${CLANGDIR}/bin/../lib:$PATH"
 function compile_clang10() {
     make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
     PATH="${CLANGDIR}/bin:${PATH}" \
-    make -j$(nproc --all) O="${OUTDIR}" \
+    make "${JOBS}" O="${OUTDIR}" \
                           ARCH=arm64 \
                           CC=clang \
                           CLANG_TRIPLE=aarch64-linux-gnu- \
