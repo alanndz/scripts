@@ -18,7 +18,7 @@ KERNEL_NAME="aLn"
 CONFIG_FILE="lavender_defconfig"
 DEVICES="lavender"
 TARGET_ARCH=arm64
-DEVELOPER="alanndz"
+ 8DEVELOPER="alanndz"
 HOST="n00b_lavender-Dev"
 
 export TZ=":Asia/Makassar"
@@ -55,6 +55,7 @@ fi
 # Location of Toolchain
 KERNELDIR=$PWD
 TOOLDIR=$KERNELDIR/.ToolBuild
+CLANGDIR="/root/clang"
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
@@ -63,13 +64,14 @@ IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
 git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}-${TARGET_ROM}" ${ZIP_DIR}
  
 if [ $USECLANG -eq 1 ]; then 
-    git clone https://github.com/NusantaraDevs/clang.git --depth=1 -b dev/10.0 "${TOOLDIR}/clang10"
-    TOOL_VERSION=$("${TOOLDIR}/clang10/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+#    git clone https://github.com/NusantaraDevs/clang.git --depth=1 -b dev/10.0 "${CLANGDIR}"
+    echo ""
 elif [ $USECLANG -eq 2 ]; then 
-    git clone https://github.com/Haseo97/Clang-10.0.0 --depth=1 "${TOOLDIR}/clang10"
-    TOOL_VERSION=$("${TOOLDIR}/clang10/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+    git clone https://github.com/Haseo97/Clang-10.0.0 --depth=1 "${CLANGDIR}"
 fi
- 
+
+TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+
 # Telegram Function
 BOT_API_KEY=$(openssl enc -base64 -d <<< Nzk5MDU4OTY3OkFBRlpjVEM5SU9lVEt4YkJucHVtWG02VHlUOTFzMzU5Y3VVCg==)
 CHAT_ID=$(openssl enc -base64 -d <<< LTEwMDEyMzAyMDQ5MjMK)
@@ -156,11 +158,11 @@ sendInfo "<b>---- aLn New Kernel ----</b>" \
  
 clean_outdir
 
-export LD_LIBRARY_PATH="${TOOLDIR}/clang10/bin/../lib:$PATH"
+export LD_LIBRARY_PATH="${CLANGDIR}/bin/../lib:$PATH"
 
 function compile_clang10() {
     make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
-    PATH="${TOOLDIR}/clang10/bin:${PATH}" \
+    PATH="${CLANGDIR}/bin:${PATH}" \
     make -j$(nproc --all) O="${OUTDIR}" \
                           ARCH=arm64 \
                           CC=clang \
