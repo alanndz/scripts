@@ -31,7 +31,7 @@ export TZ=":Asia/Makassar"
 # 1 = CLANG 10 from NusantaraDev
 # 2 = CLANG 10 from Haseo
 
-JOBS="-j4"
+JOBS="-j8"
  
 if [ ! $RELEASE_STATUS ]; then
    RELEASE_STATUS=0
