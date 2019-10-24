@@ -1,4 +1,4 @@
-b#!/usr/bin/env bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2019 @alanndz (Telegram and Github)
 # SPDX-License-Identifier: GPL-3.0-or-later
