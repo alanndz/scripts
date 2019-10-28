@@ -28,6 +28,7 @@ export TZ=":Asia/Makassar"
 # USEGCC
 # 0
 # 1 = GCC 10 from NusantaraDev
+# 2 = GCC Linaro 4.9.4
  
 if [ ! $RELEASE_STATUS ]; then
     RELEASE_STATUS=0
@@ -72,8 +73,11 @@ git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}-${TARGET_ROM}
 if [ $USEGCC -eq 1 ]; then 
     GCC64="/root/toolchain/ARM64/bin/aarch64-elf-"
     GCC32="/root/toolchain/ARM/bin/arm-eabi-"
+elif [ $USEGCC -eq 2 ]; then
+    git clone -b elf/gcc-linaro-4.9.4 --depth=1 https://github.com/aln-project/toolchain "${TOOLDIR}/GCC"
+    GCC64="${TOOLDIR}/GCC/arm64/bin/aarch64-elf-"
+    GCC32="${TOOLDIR}/GCC/arm/bin/arm-eabi-"
 fi
-
 TOOL_VERSION=$("${GCC64}gcc" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 # Telegram Function
