@@ -28,7 +28,8 @@ export TZ=":Asia/Makassar"
 # USEGCC
 # 0
 # 1 = GCC 10 from NusantaraDev
-# 2 = GCC Linaro 4.9.4
+# 2 = GCC Linaro 4.9.4 (elf version)
+# 3 = GCC Linaro 4.9.4 (non-elf version)
  
 if [ ! $RELEASE_STATUS ]; then
     RELEASE_STATUS=0
@@ -77,6 +78,10 @@ elif [ $USEGCC -eq 2 ]; then
     git clone -b elf/gcc-linaro-4.9.4 --depth=1 https://github.com/aln-project/toolchain "${TOOLDIR}/GCC"
     GCC64="${TOOLDIR}/GCC/arm64/bin/aarch64-elf-"
     GCC32="${TOOLDIR}/GCC/arm/bin/arm-eabi-"
+elif [ $USEGCC -eq 3 ]; then
+    git clone -b non-elf/gcc-linaro-4.9.4 --depth=1 https://github.com/aln-project/toolchain "${TOOLDIR}/GCC"
+    GCC64="${TOOLDIR}/GCC/arm64/bin/aarch64-linux-gnu-"
+    GCC32="${TOOLDIR}/GCC/arm/bin/arm-linux-gnueabi-"
 fi
 TOOL_VERSION=$(${GCC64}gcc --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
