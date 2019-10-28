@@ -78,7 +78,7 @@ elif [ $USEGCC -eq 2 ]; then
     GCC64="${TOOLDIR}/GCC/arm64/bin/aarch64-elf-"
     GCC32="${TOOLDIR}/GCC/arm/bin/arm-eabi-"
 fi
-TOOL_VERSION=$("${GCC64}gcc" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+TOOL_VERSION=$(${GCC64}gcc --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 # Telegram Function
 BOT_API_KEY=$(openssl enc -base64 -d <<< Nzk5MDU4OTY3OkFBRlpjVEM5SU9lVEt4YkJucHVtWG02VHlUOTFzMzU5Y3VVCg==)
