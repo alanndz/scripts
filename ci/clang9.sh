@@ -180,7 +180,6 @@ function compile_clang9() {
 #                          KBUILD_COMPILER_STRING="${TOOL_VERSION}"
 }
 
-if 
 compile_clang9 2>&1 | tee "${BUILDLOG}"
 
 BUILD_END=$(date +"%s")
