@@ -78,11 +78,15 @@ if [ $USECLANG -eq 1 ]; then
 #    git clone https://github.com/NusantaraDevs/clang.git --depth=1 -b dev/10.0 "${CLANGDIR}"
     echo ""
 elif [ $USECLANG -eq 2 ]; then 
+    CLANGDIR="${TOOLDIR}/clang"
     git clone https://github.com/Haseo97/Clang-10.0.0 --depth=1 "${CLANGDIR}"
 fi
 
 TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 export LD_LIBRARY_PATH="${CLANGDIR}/bin/../lib:$PATH"
+
+##
+#######
 
 # Telegram Function
 BOT_API_KEY=$(openssl enc -base64 -d <<< Nzk5MDU4OTY3OkFBRlpjVEM5SU9lVEt4YkJucHVtWG02VHlUOTFzMzU5Y3VVCg==)
