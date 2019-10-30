@@ -93,7 +93,7 @@ BUILD_SUCCESS="CAADBQADXgADWtMDKLZjh6sbUrFbFgQ"
 function sendInfo() {
     curl -s -X POST https://api.telegram.org/bot$BOT_API_KEY/sendMessage -d chat_id=$CHAT_ID -d "parse_mode=HTML" -d text="$(
             for POST in "${@}"; do
-c                echo "${POST}"
+                echo "${POST}"
             done
         )" 
 &>/dev/null
