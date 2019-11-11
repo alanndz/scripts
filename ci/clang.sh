@@ -69,10 +69,11 @@ TOOLDIR=$KERNELDIR/.ToolBuild
 CLANGDIR="/root/clang"
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
-IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
- 
+IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz"
+DTB="${OUTDIR}/arch/arm64/boot/dts/qcom"
+
 # Download tool
-git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}-${TARGET_ROM}" ${ZIP_DIR}
+git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}" ${ZIP_DIR}
  
 if [ $USECLANG -eq 1 ]; then 
 #    git clone https://github.com/NusantaraDevs/clang.git --depth=1 -b dev/10.0 "${CLANGDIR}"
@@ -144,8 +145,8 @@ function make_zip () {
 			sendLog
         	exit 1;
 	fi
-	echo "**** Copying zImage ****"
-	cp ${IMAGE} ${ZIP_DIR}/zImage
+        cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
+	cp ${IMAGE} ${ZIP_DIR}/kernel
 	make ZIP="${ZIP_NAME}" normal &>/dev/null
 }
  
