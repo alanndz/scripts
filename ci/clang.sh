@@ -62,6 +62,7 @@ if [[ ! $DEVICES || ! $PHONE ]]; then
 fi
 if [ ! $CUSTOM_DTB ]; then
     CUSTOM_DTB=0
+fi
 if [ ! $JOBS ]; then
     JOBS="$(nproc)"
 fi
