@@ -211,7 +211,7 @@ sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
 compile_clang10 2>&1 | tee "${BUILDLOG}"
 checkBuild
 
-if [ $CUSTOM_DTB -eq 1]; then
+if [ $CUSTOM_DTB -eq 1 ]; then
     cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
     cp ${IMAGE} ${ZIP_DIR}/kernel
 #    sh -c "$(curl -fsSL https://github.com/aln-project/raw/master/patch_dtb/patch_dtb.sh)"
