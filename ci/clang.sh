@@ -18,6 +18,7 @@ export CONFIG_FILE
 export DEVICES
 export KERNEL_NAME
 export PHONE
+export CUSTOM_DTB
 
 export ARCH=arm64
 DEVELOPER="alanndz"
@@ -59,6 +60,8 @@ if [[ ! $DEVICES || ! $PHONE ]]; then
     echo " Fill DEVICES and PHONE!!!"
     exit 1
 fi
+if [ ! $CUSTOM_DTB ]; then
+    CUSTOM_DTB=0
 if [ ! $JOBS ]; then
     JOBS="$(nproc)"
 fi
@@ -134,27 +137,62 @@ fi
  
 ####
  
-function make_zip () {
-	cd ${ZIP_DIR}/
-	make clean &>/dev/null
-	if [ ! -f ${IMAGE} ]; then
-        	echo -e "Build failed :P";
-        	sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")";
-	        sendInfo "$(echo -e "Kernel compilation failed")";
-			sendStick "${BUILD_FAIL}"
-			sendLog
-        	exit 1;
-	fi
-        cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
-	cp ${IMAGE} ${ZIP_DIR}/kernel
-	make ZIP="${ZIP_NAME}" normal &>/dev/null
+function checkBuild() {
+    if [ ! -f ${IMAGE} ]; then
+        BUILD_END=$(date +"%s")
+        DIFF=$(($BUILD_END - $BUILD_START))
+        echo -e "Build failed :P";
+        sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")";
+        sendInfo "$(echo -e "Kernel compilation failed")"
+	sendStick "${BUILD_FAIL}"
+	sendLog
+        exit 1
+   fi
+}
+
+function makeZip() {
+    make -C $ZIP_DIR ZIP="${ZIP_NAME}" normal &>/dev/null
 }
  
-function clean_outdir() {
+function cleanOutdir() {
     make O=${OUTDIR} clean
     make mrproper
-    rm -rf ${OUTDIR}/*
+    rm -rf ${OUTDIR}/
 }
+
+function patchDtb() {
+    curl -s https://github.com/zxc070/kernel_xiaomi_lavender/commit/8fc6e7d55e77ef37e4fd8fb665c6be8105aca8f7.patch | git am
+}
+
+function compile_dtb() {
+    make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
+    PATH="${CLANGDIR}/bin:${PATH}" \
+    make dtbs "-j${JOBS}" O="${OUTDIR}" \
+                          ARCH=arm64 \
+                          CC=clang \
+                          CLANG_TRIPLE=aarch64-linux-gnu- \
+                          CROSS_COMPILE=aarch64-linux-gnu- \
+                          CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                          LOCALVERSION="-${KVERSION}" \
+                          KBUILD_BUILD_USER="${DEVELOPER}" \
+                          KBUILD_BUILD_HOST="${HOST}"
+}
+
+function compile_clang10() {
+    make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
+    PATH="${CLANGDIR}/bin:${PATH}" \
+    make "-j${JOBS}" O="${OUTDIR}" \
+                          ARCH=arm64 \
+                          CC=clang \
+                          CLANG_TRIPLE=aarch64-linux-gnu- \
+                          CROSS_COMPILE=aarch64-linux-gnu- \
+                          CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                          LOCALVERSION="-${KVERSION}" \
+                          KBUILD_BUILD_USER="${DEVELOPER}" \
+                          KBUILD_BUILD_HOST="${HOST}"
+}
+
+cleanOutdir
  
 BUILD_START=$(date +"%s")
 DATE=`date`
@@ -169,34 +207,30 @@ sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
     "<b>Compiler:</b> <code>${TOOL_VERSION}</code>" \
     "<b>Started at</b> <code>$DATE</code>"
 
-clean_outdir
-
-function compile_clang10() {
-    make ARCH=arm64 O="${OUTDIR}" "${CONFIG_FILE}"
-    PATH="${CLANGDIR}/bin:${PATH}" \
-    make "-j${JOBS}" O="${OUTDIR}" \
-                          ARCH=arm64 \
-                          CC=clang \
-                          CLANG_TRIPLE=aarch64-linux-gnu- \
-                          CROSS_COMPILE=aarch64-linux-gnu- \
-                          CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                          LOCALVERSION="-${KVERSION}" \
-                          KBUILD_BUILD_USER="${DEVELOPER}" \
-                          KBUILD_BUILD_HOST="${HOST}"
-#                          KBUILD_COMPILER_STRING="${TOOL_VERSION}"
-}
-
 compile_clang10 2>&1 | tee "${BUILDLOG}"
+checkBuild
+
+if $CUSTOM_DTB; then
+    cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
+    cp ${IMAGE} ${ZIP_DIR}/kernel
+#    sh -c "$(curl -fsSL https://github.com/aln-project/raw/master/patch_dtb/patch_dtb.sh)"
+    patchDtb
+    compile_dtb
+    DTB_NAME=$DTB/*.dtb | rev | cut -d. -f2 | cut -d/ -f1 | rev
+    cp $DTB/*.dtb $ZIP_DIR/dtbs/$DTB_NAME.dtb-custom
+else
+    cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
+    cp ${IMAGE} ${ZIP_DIR}/kernel
+fi
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
- 
+
 if [ -d ${KERNELDIR}/patch ]; then
     cp -rf ${KERNELDIR}/patch ${ZIP_DIR}/
 fi
- 
-make_zip
-# sendInfo "$(echo -e "NOTE!!! INSTALL on ROM ${CODENAME} ONLY!!!")" 
+
+makeZip
 sendZip
 sendLog
 sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")"
