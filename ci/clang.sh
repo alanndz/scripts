@@ -217,8 +217,8 @@ if [ $CUSTOM_DTB -eq 1 ]; then
 #    sh -c "$(curl -fsSL https://github.com/aln-project/raw/master/patch_dtb/patch_dtb.sh)"
     patchDtb
     compile_dtb
-    DTB_NAME=${DTB}/*.dtb
-    cp "${DTB}/*.dtb" "${ZIP_DIR}/dtbs/$(${DTB_NAME} | rev | cut -d. -f2 | cut -d/ -f1 | rev).dtb-custom"
+    for f in `find ${DTB} -iname '*.dtb' -type f -print`;do  mv "$f" ${f%.dtb}.dtb-custom; done
+    cp ${DTB}/*.dtb-custom ${ZIP_DIR}/dtbs
 else
     cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
     cp ${IMAGE} ${ZIP_DIR}/kernel
