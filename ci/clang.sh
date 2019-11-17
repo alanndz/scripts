@@ -75,6 +75,7 @@ ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz"
 DTB="${OUTDIR}/arch/arm64/boot/dts/qcom"
+BUILDLOG="${OUTDIR}/kernel-aLn-${CODENAME}-${DEVICES}-$(date "+%H%M-%d%m%Y").log"
 
 # Download tool
 git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}" ${ZIP_DIR}
@@ -121,8 +122,6 @@ function sendLog() {
 }
  
 #####
-
-BUILDLOG="${OUTDIR}/build-${CODENAME}-${DEVICES}-$(date "+%H%M-%d%m%Y").log"
 
 if [ $RELEASE_STATUS -eq 1 ]; then
 	KVERSION="${CODENAME}-${KERNEL_VERSION}"
@@ -194,10 +193,7 @@ function compile_clang10() {
 }
 
 cleanOutdir
- 
-BUILD_START=$(date +"%s")
-DATE=`date`
- 
+
 sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
     "<b>Device:</b> ${DEVICES} or ${PHONE}" \
     "<b>Name:</b> <code>${KERNEL_NAME}-${KVERSION}</code>" \
@@ -207,6 +203,9 @@ sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
     "<b>Started on:</b> <code>$(hostname)</code>" \
     "<b>Compiler:</b> <code>${TOOL_VERSION}</code>" \
     "<b>Started at</b> <code>$DATE</code>"
+
+BUILD_START=$(date +"%s")
+DATE=`date`
 
 compile_clang10 2>&1 | tee "${BUILDLOG}"
 checkBuild
