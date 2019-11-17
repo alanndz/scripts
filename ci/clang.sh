@@ -194,6 +194,10 @@ function compile_clang10() {
 
 cleanOutdir
 
+
+BUILD_START=$(date +"%s")
+DATE=`date`
+
 sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
     "<b>Device:</b> ${DEVICES} or ${PHONE}" \
     "<b>Name:</b> <code>${KERNEL_NAME}-${KVERSION}</code>" \
@@ -203,9 +207,6 @@ sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
     "<b>Started on:</b> <code>$(hostname)</code>" \
     "<b>Compiler:</b> <code>${TOOL_VERSION}</code>" \
     "<b>Started at</b> <code>$DATE</code>"
-
-BUILD_START=$(date +"%s")
-DATE=`date`
 
 compile_clang10 2>&1 | tee "${BUILDLOG}"
 checkBuild
