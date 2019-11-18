@@ -75,7 +75,6 @@ ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz"
 DTB="${OUTDIR}/arch/arm64/boot/dts/qcom"
-BUILDLOG="${OUTDIR}/kernel-aLn-${CODENAME}-${DEVICES}-$(date "+%H%M-%d%m%Y").log"
 
 # Download tool
 git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}" ${ZIP_DIR}
@@ -92,6 +91,16 @@ TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(htt
 export LD_LIBRARY_PATH="${CLANGDIR}/bin/../lib:$PATH"
 
 ##
+if [ $RELEASE_STATUS -eq 1 ]; then
+	KVERSION="${CODENAME}-${KERNEL_VERSION}"
+	ZIP_NAME="${KERNEL_NAME}-${KVERSION}-${DEVICES}-$(date "+%H%M-%d%m%Y").zip"
+elif [ $RELEASE_STATUS -eq 0 ]; then
+	KVERSION="${CODENAME}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M")"
+	ZIP_NAME="${KERNEL_NAME}-${CODENAME}-${DEVICES}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M").zip"
+fi
+
+BUILDLOG="${TOOLDIR}/${KERNEL_NAME}-${KVERSION}.log"
+
 #######
 
 # Telegram Function
@@ -122,14 +131,6 @@ function sendLog() {
 }
  
 #####
-
-if [ $RELEASE_STATUS -eq 1 ]; then
-	KVERSION="${CODENAME}-${KERNEL_VERSION}"
-	ZIP_NAME="${KERNEL_NAME}-${KVERSION}-${DEVICES}-$(date "+%H%M-%d%m%Y").zip"
-elif [ $RELEASE_STATUS -eq 0 ]; then
-	KVERSION="${CODENAME}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M")"
-	ZIP_NAME="${KERNEL_NAME}-${CODENAME}-${DEVICES}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M").zip"
-fi
 
 ####
 
