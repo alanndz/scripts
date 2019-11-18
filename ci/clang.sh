@@ -130,25 +130,8 @@ elif [ $RELEASE_STATUS -eq 0 ]; then
 	KVERSION="${CODENAME}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M")"
 	ZIP_NAME="${KERNEL_NAME}-${CODENAME}-${DEVICES}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M").zip"
 fi
- 
-if [ ! -d "${BUILDLOG}" ]; then
- 	rm -rf "${BUILDLOG}"
-fi
- 
+
 ####
- 
-function checkBuild() {
-    if [ ! -f ${IMAGE} ]; then
-        BUILD_END=$(date +"%s")
-        DIFF=$(($BUILD_END - $BUILD_START))
-        echo -e "Build failed :P";
-        sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")";
-        sendInfo "$(echo -e "Kernel compilation failed")"
-	sendStick "${BUILD_FAIL}"
-	sendLog
-        exit 1
-   fi
-}
 
 function makeZip() {
     make -C $ZIP_DIR ZIP="${ZIP_NAME}" normal &>/dev/null
@@ -209,7 +192,19 @@ sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
     "<b>Started at</b> <code>$DATE</code>"
 
 compile_clang10 2>&1 | tee "${BUILDLOG}"
-checkBuild
+
+BUILD_END=$(date +"%s")
+DIFF=$(($BUILD_END - $BUILD_START))
+
+# check condition
+if [ ! -f ${IMAGE} ]; then
+    echo -e "Build failed :P";
+    sendLog
+    sendInfo "<b>Kernel Compilation Failed.</b>" \
+             "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
+    sendStick "${BUILD_FAIL}"
+    exit 1;
+fi
 
 if [ $CUSTOM_DTB -eq 1 ]; then
     cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
@@ -224,12 +219,10 @@ else
     cp ${IMAGE} ${ZIP_DIR}/kernel
 fi
 
-BUILD_END=$(date +"%s")
-DIFF=$(($BUILD_END - $BUILD_START))
-
 if [ -d ${KERNELDIR}/patch ]; then
     cp -rf ${KERNELDIR}/patch ${ZIP_DIR}/
 fi
+#####
 
 makeZip
 sendZip
