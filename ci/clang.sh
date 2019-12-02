@@ -19,7 +19,7 @@ export DEVICES
 export KERNEL_NAME
 export PHONE
 export CUSTOM_DTB
-
+export token
 export ARCH=arm64
 DEVELOPER="alanndz"
 HOST="n00b_lavender-Dev"
@@ -104,7 +104,7 @@ BUILDLOG="${TOOLDIR}/${KERNEL_NAME}-${KVERSION}.log"
 #######
 
 # Telegram Function
-BOT_API_KEY=$(openssl enc -base64 -d <<< Nzk5MDU4OTY3OkFBRlpjVEM5SU9lVEt4YkJucHVtWG02VHlUOTFzMzU5Y3VVCg==)
+BOT_API_KEY=$(openssl enc -base64 -d <<< "${token}")
 CHAT_ID=$(openssl enc -base64 -d <<< LTEwMDEyMzAyMDQ5MjMK)
 BUILD_FAIL="CAADBQADigADWtMDKL3bJB8yS0yiFgQ"
 BUILD_SUCCESS="CAADBQADXgADWtMDKLZjh6sbUrFbFgQ"
