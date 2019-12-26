@@ -18,7 +18,7 @@ export CONFIG_FILE
 export DEVICES
 export KERNEL_NAME
 export PHONE
-
+export token
 export ARCH=arm64
 DEVELOPER="alanndz"
 HOST="n00b_lavender-Dev"
@@ -68,11 +68,13 @@ TOOLDIR=$KERNELDIR/.ToolBuild
 CLANGDIR="${TOOLDIR}/clang"
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
-IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
+IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz"
+DTB="${OUTDIR}/arch/arm64/boot/dts/qcom"
+
 export PATH="${TOOLDIR}/clang/bin:${TOOLDIR}/gcc/arm64/bin:${TOOLDIR}/gcc/arm/bin:${PATH}"
 
 # Download tool
-git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}-${TARGET_ROM}" ${ZIP_DIR}
+git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}" ${ZIP_DIR}
  
 if [ $USECLANG -eq 1 ]; then
     git clone --depth=1 -b google/clang-9.0.8 https://github.com/aln-project/toolchain "${CLANGDIR}"
@@ -85,7 +87,7 @@ TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(htt
 #######
 
 # Telegram Function
-BOT_API_KEY=$(openssl enc -base64 -d <<< Nzk5MDU4OTY3OkFBRlpjVEM5SU9lVEt4YkJucHVtWG02VHlUOTFzMzU5Y3VVCg==)
+BOT_API_KEY=$(openssl enc -base64 -d <<< "${token}")
 CHAT_ID=$(openssl enc -base64 -d <<< LTEwMDEyMzAyMDQ5MjMK)
 BUILD_FAIL="CAADBQADigADWtMDKL3bJB8yS0yiFgQ"
 BUILD_SUCCESS="CAADBQADXgADWtMDKLZjh6sbUrFbFgQ"
@@ -129,20 +131,8 @@ fi
  
 ####
  
-function make_zip () {
-	cd ${ZIP_DIR}/
-	make clean &>/dev/null
-	if [ ! -f ${IMAGE} ]; then
-        	echo -e "Build failed :P";
-        	sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")";
-	        sendInfo "$(echo -e "Kernel compilation failed")";
-			sendStick "${BUILD_FAIL}"
-			sendLog
-        	exit 1;
-	fi
-	echo "**** Copying zImage ****"
-	cp ${IMAGE} ${ZIP_DIR}/zImage
-	make ZIP="${ZIP_NAME}" normal &>/dev/null
+function makeZip() {
+    make -C $ZIP_DIR ZIP="${ZIP_NAME}" normal &>/dev/null
 }
  
 function clean_outdir() {
@@ -185,15 +175,29 @@ compile_clang9 2>&1 | tee "${BUILDLOG}"
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
  
+
+# check condition
+if [ ! -f ${IMAGE} ]; then
+    echo -e "Build failed :P";
+    sendLog
+    sendInfo "<b>Kernel Compilation Failed.</b>" \
+             "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
+    sendStick "${BUILD_FAIL}"
+    exit 1;
+fi
+
+cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
+cp ${IMAGE} ${ZIP_DIR}/kernel
+
 if [ -d ${KERNELDIR}/patch ]; then
     cp -rf ${KERNELDIR}/patch ${ZIP_DIR}/
 fi
  
-make_zip
-# sendInfo "$(echo -e "NOTE!!! INSTALL on ROM ${CODENAME} ONLY!!!")" 
+makeZip
 sendZip
 sendLog
 sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")"
 sendStick "${BUILD_SUCCESS}"
  
+
 
