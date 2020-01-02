@@ -20,6 +20,8 @@ export KERNEL_NAME
 export PHONE
 export CUSTOM_DTB
 export token
+export SEND_TO_HANA_CI
+
 export ARCH=arm64
 DEVELOPER="alanndz"
 HOST="n00b_lavender-Dev"
@@ -105,7 +107,11 @@ BUILDLOG="${TOOLDIR}/${KERNEL_NAME}-${KVERSION}.log"
 
 # Telegram Function
 BOT_API_KEY=$(openssl enc -base64 -d <<< "${token}")
-CHAT_ID=$(openssl enc -base64 -d <<< LTEwMDEyMzAyMDQ5MjMK)
+if [ ${SEND_TO_HANA_CI} ]; then
+    CHAT_ID=$(openssl enc -base64 -d <<< LTEwMDEyNTE5NTM4NDUK)
+else
+    CHAT_ID=$(openssl enc -base64 -d <<< LTEwMDEyMzAyMDQ5MjMK)
+fi
 BUILD_FAIL="CAADBQADigADWtMDKL3bJB8yS0yiFgQ"
 BUILD_SUCCESS="CAADBQADXgADWtMDKLZjh6sbUrFbFgQ"
 
