@@ -72,7 +72,6 @@ fi
 # Location of Toolchain
 KERNELDIR=$PWD
 TOOLDIR=$KERNELDIR/.ToolBuild
-CLANGDIR="/root/clang"
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz"
@@ -83,10 +82,12 @@ git clone https://github.com/aln-project/AnyKernel3 -b "${DEVICES}" ${ZIP_DIR}
  
 if [ $USECLANG -eq 1 ]; then 
 #    git clone https://github.com/NusantaraDevs/clang.git --depth=1 -b dev/10.0 "${CLANGDIR}"
-    echo ""
+    CLANGDIR="/root/clang"
 elif [ $USECLANG -eq 2 ]; then 
     CLANGDIR="${TOOLDIR}/clang"
     git clone https://github.com/Haseo97/Clang-10.0.0 --depth=1 "${CLANGDIR}"
+elif [ $USECLANG -eq 11 ]; then
+    CLANGDIR="/root/clang-11"
 fi
 
 TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
