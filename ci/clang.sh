@@ -32,7 +32,9 @@ export TZ=":Asia/Makassar"
 # 0
 # 1 = CLANG 10 from NusantaraDev
 # 2 = CLANG 10 from Haseo
- 
+# 10 = Proton Clang 10
+# 11 = Proton Clang 11
+
 if [ ! $RELEASE_STATUS ]; then
     RELEASE_STATUS=0
 fi
@@ -85,9 +87,10 @@ if [ $USECLANG -eq 1 ]; then
     CLANGDIR="/root/clang"
 elif [ $USECLANG -eq 2 ]; then 
     CLANGDIR="${TOOLDIR}/clang"
-    git clone https://github.com/Haseo97/Clang-10.0.0 --depth=1 "${CLANGDIR}"
+elif [ $USECLANG -eq 10 ]; then
+    CLANGDIR="/root/proton-10"
 elif [ $USECLANG -eq 11 ]; then
-    CLANGDIR="/root/clang-11"
+    CLANGDIR="/root/proton-11"
 fi
 
 TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
