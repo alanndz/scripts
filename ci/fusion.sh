@@ -72,8 +72,8 @@ KERNELDIR=$PWD
 TOOLDIR=$KERNELDIR/.ToolBuild
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Output"
-IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz"
-DTB="${OUTDIR}/arch/arm64/boot/dts/qcom"
+IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
+# DTB="${OUTDIR}/arch/arm64/boot/dts/qcom"
 
 # Download tool
 git clone https://github.com/alanndz/AnyKernel3 -b fusion ${ZIP_DIR}
@@ -194,8 +194,8 @@ if [ ! -f ${IMAGE} ]; then
     exit 1;
 fi
 
-cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
-cp ${IMAGE} ${ZIP_DIR}/kernel
+# cp ${DTB}/*.dtb ${ZIP_DIR}/dtbs
+cp ${IMAGE} ${ZIP_DIR}
 
 #####
 
