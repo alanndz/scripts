@@ -18,7 +18,6 @@ export CONFIG_FILE
 export DEVICES
 export KERNEL_NAME
 export PHONE
-export CUSTOM_DTB
 export token
 export SEND_TO_HANA_CI
 
@@ -63,9 +62,6 @@ fi
 if [[ ! $DEVICES || ! $PHONE ]]; then
     echo " Fill DEVICES and PHONE!!!"
     exit 1
-fi
-if [ ! $CUSTOM_DTB ]; then
-    CUSTOM_DTB=0
 fi
 if [ ! $JOBS ]; then
     JOBS="$(nproc)"
