@@ -76,7 +76,7 @@ IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz"
 DTB="${OUTDIR}/arch/arm64/boot/dts/qcom"
 
 # Download tool
-git clone -b fusion-old --depth=1 https://github.com/alanndz/AnyKernel3 ${ZIP_DIR}
+git clone https://github.com/alanndz/AnyKernel3 -b fusion ${ZIP_DIR}
  
 if [ $USECLANG -eq 1 ]; then 
     CLANGDIR="/root/clang"
