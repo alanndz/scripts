@@ -87,7 +87,7 @@ fi
 TOOL_VERSION=$(${GCC64}gcc --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 # Telegram Function
-BOT_API_KEY=${token}
+BOT_API_KEY=$(openssl enc -base64 -d <<< "${token}")
 CHAT_ID=$(openssl enc -base64 -d <<< LTM1OTYzMDM5MAo=)
 BUILD_FAIL="CAADBQADigADWtMDKL3bJB8yS0yiFgQ"
 BUILD_SUCCESS="CAADBQADXgADWtMDKLZjh6sbUrFbFgQ"
