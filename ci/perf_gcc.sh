@@ -18,6 +18,7 @@ export CONFIG_FILE
 export DEVICES
 export KERNEL_NAME
 export PHONE
+export token
 
 export ARCH=arm64
 DEVELOPER="perf"
