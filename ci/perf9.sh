@@ -80,7 +80,7 @@ if [ $USECLANG -eq 1 ]; then
     git clone --depth=1 -b google/clang-9.0.8 https://github.com/aln-project/toolchain "${CLANGDIR}"
     git clone --depth=1 -b google/gcc-4.9.r39 https://github.com/aln-project/toolchain "${TOOLDIR}/gcc"
 elif [ $USECLANG -eq 2 ]; then
-    git clone --depth=1 -b master https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 ${CLANGDIR}
+    git clone --depth=1 -b master https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 "${CLANGDIR}"
     git clone --depth=1 -b google/gcc-4.9.r39 https://github.com/aln-project/toolchain "${TOOLDIR}/gcc"
 fi
 
