@@ -81,6 +81,7 @@ if [ $USECLANG -eq 1 ]; then
     CLANGDIR="/root/clang"
 elif [ $USECLANG -eq 2 ]; then 
     CLANGDIR="${TOOLDIR}/clang"
+    git clone --depth=1 https://github.com/Haseo97/Clang-11.0.0 "${CLANGDIR}"
 elif [ $USECLANG -eq 10 ]; then
     CLANGDIR="/root/proton-10"
 elif [ $USECLANG -eq 11 ]; then
