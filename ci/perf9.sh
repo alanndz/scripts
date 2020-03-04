@@ -79,6 +79,9 @@ git clone https://github.com/alanndz/AnyKernel3 -b perf ${ZIP_DIR}
 if [ $USECLANG -eq 1 ]; then
     git clone --depth=1 -b google/clang-9.0.8 https://github.com/aln-project/toolchain "${CLANGDIR}"
     git clone --depth=1 -b google/gcc-4.9.r39 https://github.com/aln-project/toolchain "${TOOLDIR}/gcc"
+elif [ $USECLANG -eq 2 ]; then
+    git clone --depth=1 -b master https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 ${CLANGDIR}
+    git clone --depth=1 -b google/gcc-4.9.r39 https://github.com/aln-project/toolchain "${TOOLDIR}/gcc"
 fi
 
 TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
