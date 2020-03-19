@@ -28,11 +28,11 @@ HOST="fusion_lavender-Dev"
 export TZ=":Asia/Makassar"
 
 # USECLANG
-# 0
-# 1 = CLANG 10 from NusantaraDev
-# 2 = CLANG 10 from Haseo
-# 10 = Proton Clang 10
-# 11 = Proton Clang 11
+# list:
+# nusantara-10
+# pendulum-10
+# proton-10
+# proton-11
 
 if [ ! $RELEASE_STATUS ]; then
     RELEASE_STATUS=0
@@ -77,16 +77,8 @@ IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
 
 # Download tool
 git clone https://github.com/alanndz/AnyKernel3 -b fusion ${ZIP_DIR}
- 
-if [ $USECLANG -eq 1 ]; then 
-    CLANGDIR="/root/clang"
-elif [ $USECLANG -eq 2 ]; then 
-    CLANGDIR="${TOOLDIR}/clang"
-elif [ $USECLANG -eq 10 ]; then
-    CLANGDIR="/root/proton-10"
-elif [ $USECLANG -eq 11 ]; then
-    CLANGDIR="/root/proton-11"
-fi
+
+CLANGDIR="/root/${USECLANG}"
 
 TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 export LD_LIBRARY_PATH="${CLANGDIR}/bin/../lib:$PATH"
