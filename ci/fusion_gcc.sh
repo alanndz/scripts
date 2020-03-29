@@ -82,6 +82,11 @@ elif [ $USEGCC -eq 3 ]; then
     git clone -b non-elf/gcc-linaro-4.9.4 --depth=1 https://github.com/aln-project/toolchain "${TOOLDIR}/GCC"
     GCC64="${TOOLDIR}/GCC/arm64/bin/aarch64-linux-gnu-"
     GCC32="${TOOLDIR}/GCC/arm/bin/arm-linux-gnueabi-"
+elif [ $USEGCC -eq 10 ]; then
+    git clone -b non-elf/gcc-10.0.0/arm --depth=1 --single-branch https://github.com/chips-project/priv-toolchains "${TOOLDIR}/gcc9.2/arm"
+    git clone -b non-elf/gcc-10.0.0/arm64 --depth=1 --single-branch https://github.com/chips-project/priv-toolchains "${TOOLDIR}/gcc9.2/arm64"
+    GCC32="${TOOLDIR}/gcc9.2/arm/bin/arm-linux-gnueabi-"
+    GCC64="${TOOLDIR}/gcc9.2/arm64/bin/aarch64-linux-gnu-"
 fi
 TOOL_VERSION=$(${GCC64}gcc --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
@@ -118,7 +123,7 @@ function sendLog() {
  
 #####
 
-BUILDLOG="${OUTDIR}/build-${CODENAME}-${DEVICES}-$(date "+%H%M-%d%m%Y").log"
+BUILDLOG="${OUTDIR}/${KERNEL_NAME}-${KVERSION}.log"
 
 if [ $RELEASE_STATUS -eq 1 ]; then
 	KVERSION="${CODENAME}-${KERNEL_VERSION}"
