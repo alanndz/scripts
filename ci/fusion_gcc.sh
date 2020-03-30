@@ -87,6 +87,11 @@ elif [ $USEGCC -eq 10 ]; then
     git clone -b non-elf/gcc-10.0.0/arm64 --depth=1 --single-branch https://github.com/chips-project/priv-toolchains "${TOOLDIR}/gcc9.2/arm64"
     GCC32="${TOOLDIR}/gcc9.2/arm/bin/arm-linux-gnueabi-"
     GCC64="${TOOLDIR}/gcc9.2/arm64/bin/aarch64-linux-gnu-"
+elif [ $USEGCC -eq 93 ]; then
+    git clone -b master --depth=1 --single-branch https://github.com/AOSPA/android_prebuilts_gcc_linux-x86_arm_arm-eabi "${TOOLDIR}/gcc9.3/arm"
+    git clone -b master --depth=1 --single-branch https://github.com/AOSPA/android_prebuilts_gcc_linux-x86_aarch64_aarch64-elf "${TOOLDIR}/gcc9.3/arm64"
+    GCC32="${TOOLDIR}/gcc9.3/arm/bin/arm-eabi-"
+    GCC64="${TOOLDIR}/gcc9.3/arm64/bin/aarch64-elf-"
 fi
 TOOL_VERSION=$(${GCC64}gcc --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
@@ -123,8 +128,6 @@ function sendLog() {
  
 #####
 
-BUILDLOG="${OUTDIR}/${KERNEL_NAME}-${KVERSION}.log"
-
 if [ $RELEASE_STATUS -eq 1 ]; then
 	KVERSION="${CODENAME}-${KERNEL_VERSION}"
 	ZIP_NAME="${KERNEL_NAME}-${KVERSION}-${DEVICES}-$(date "+%H%M-%d%m%Y").zip"
@@ -132,10 +135,8 @@ elif [ $RELEASE_STATUS -eq 0 ]; then
 	KVERSION="${CODENAME}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M")"
 	ZIP_NAME="${KERNEL_NAME}-${CODENAME}-${DEVICES}-$(git log --pretty=format:'%h' -1)-$(date "+%H%M").zip"
 fi
- 
-if [ ! -d "${BUILDLOG}" ]; then
- 	rm -rf "${BUILDLOG}"
-fi
+
+BUILDLOG="${OUTDIR}/${KERNEL_NAME}-${KVERSION}.log"
  
 ####
  
