@@ -22,6 +22,7 @@ export token
 export SEND_TO_HANA_CI
 
 export ARCH=arm64
+export SUBARCH=arm64
 DEVELOPER="alanndz-nicklas373"
 HOST="fusion_lavender-Dev"
 
@@ -155,7 +156,22 @@ function compile_clang10() {
                           KBUILD_BUILD_HOST="${HOST}"
 }
 
-cleanOutdir
+function lld() {
+	make O="${OUTDIR}" "${CONFIG_FILE}"
+	PATH="${CLANGDIR}/bin:${PATH}" \
+	make -j"$JOBS" O="$OUTDIR" \
+		CROSS_COMPILE=aarch64-linux-gnu- \
+		CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+		CC=clang \
+		AR=llvm-ar \
+		NM=llvm-nm \
+		LD=ld.lld \
+		OBJCOPY=llvm-objcopy \
+		OBJDUMP=llvm-objdump \
+		STRIP=llvm-strip 2>&1 | tee "$BUILDLOG"
+}
+
+# cleanOutdir
 
 
 BUILD_START=$(date +"%s")
@@ -171,7 +187,8 @@ sendInfo "<b>---- ${KERNEL_NAME} New Kernel ----</b>" \
     "<b>Compiler:</b> <code>${TOOL_VERSION}</code>" \
     "<b>Started at</b> <code>$DATE</code>"
 
-compile_clang10 2>&1 | tee "${BUILDLOG}"
+# compile_clang10 2>&1 | tee "${BUILDLOG}"
+lld
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
