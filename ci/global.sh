@@ -3,10 +3,13 @@
 # Copyright (C) 2019 @alanndz (Telegram and Github)
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
+# Credit to @panchajanya1999 for compile use clang
+# https://github.com/Panchajanya1999/myscripts/blob/master/kernel.sh
+#
 # New Automatic Build for global
 #
 #
-# EX CONFIGURATION
+# Example CONFIGURATION
 # export RELEASE_STATUS=0 # 0 for false | 1 for true
 # export KERNEL_NAME="aLn"
 # export CODENAME="Blood Voivode"
