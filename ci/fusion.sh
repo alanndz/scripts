@@ -79,7 +79,9 @@ IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
 # Download tool
 git clone https://github.com/alanndz/AnyKernel3 -b fusion ${ZIP_DIR}
 
-CLANGDIR="/root/${USECLANG}"
+# CLANGDIR="/root/${USECLANG}"
+CLANGDIR="$TOOLDIR/clang-llvm"
+git clone --depth=1 https://github.com/Panchajanya1999/clang-llvm.git "$CLANGDIR"
 
 TOOL_VERSION=$("${CLANGDIR}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 export LD_LIBRARY_PATH="${CLANGDIR}/bin/../lib:$PATH"
