@@ -22,6 +22,7 @@
 # export USEGCC=93 # explain in bottom
 # export CHAT_ID=-11234566
 # export COMPILER_IS_CLANG=true # true for using clang | false for gcc
+# AK_BRANCH="lavender"
 # export JOBS=8
 #
 # # USECLANG
@@ -54,6 +55,7 @@ export USEGCC
 export USECLANG
 export DEVELOPER
 export HOST
+export AK_BRANCH
 export JOBS
 export TZ=":Asia/Makassar"
 
@@ -98,7 +100,7 @@ fi
 BUILDLOG="${OUTDIR}/${KERNEL_NAME}-${KVERSION}.log"
 
 ### Clone AnyKernel3 ###
-git clone https://github.com/alanndz/AnyKernel3 -b lavender ${ZIP_DIR}
+git clone https://github.com/alanndz/AnyKernel3 -b $AK_BRANCH ${ZIP_DIR}
 ###### Telegram Function #####
 BOT_API_KEY=$(openssl enc -base64 -d <<< "${token}")
 BUILD_FAIL="CAADBQADigADWtMDKL3bJB8yS0yiFgQ"
