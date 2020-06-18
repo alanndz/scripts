@@ -90,7 +90,7 @@ ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/.Out"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
 
-if [ $RELEASE_STATUS -q 1 ]; then
+if [ "$RELEASE_STATUS" = "true" ]; then
 	KVERSION="${CODENAME}-${RELEASE_VERSION}"
 	ZIP_NAME="${KERNEL_NAME}-${KVERSION}-${DEVICES}-$(date "+%H%M-%d%m%Y").zip"
 else
