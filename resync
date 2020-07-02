@@ -44,7 +44,7 @@ def merge(val):
 
   ret = os.system('git fetch {} {}'.format(path_link + repo, path_branch))
   # if ret is not None: exit(1)
-  ret = os.system('git merge FETCH HEAD')
+  ret = os.system('git merge FETCH_HEAD')
   # if ret is not None: exit(1)
 
   os.chdir(cwd)
