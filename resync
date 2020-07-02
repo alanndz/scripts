@@ -73,6 +73,7 @@ def show_help():
   print('Usage: resync [command] [argument]\n')
   print('Commands:')
   print('all\t\tResync all repo')
+  print('list\t\tList repo')
   print('merge\t\tMerge repo from source')
   print('push\t\tPush repo to github')
   print('help\t\tShow this help')
@@ -89,6 +90,11 @@ if __name__ == "__main__":
 
   elif args[1] == 'all':
     resync_all()
+
+  elif args[1] == 'list':
+    print('List repo:\n')
+    for i in path_folder:
+      print(i)
 
   elif args[1] == 'merge':
     if len(args) == 2:
