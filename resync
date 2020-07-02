@@ -18,12 +18,14 @@ path_branch ='lineage-17.1'
 path_folder = [
   'packages/apps/Settings',
   'vendor/lineage',
-  'frameworks/base'
+  'frameworks/base',
+  'build/soong'
   ]
 path_repo = [
   'android_packages_apps_Settings',
   'android_vendor_lineage',
-  'android_frameworks_base'
+  'android_frameworks_base',
+  'android_build_soong'
   ]
 
 def resync_all():
