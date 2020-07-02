@@ -16,16 +16,16 @@ manifest_branch = 'q'
 path_link = 'https://github.com/LineageOS/'
 path_branch ='lineage-17.1'
 path_folder = [
-  'packages/apps/Settings',
-  'vendor/lineage',
+  'build/soong',
   'frameworks/base',
-  'build/soong'
+  'packages/apps/Settings',
+  'vendor/lineage'
   ]
 path_repo = [
-  'android_packages_apps_Settings',
-  'android_vendor_lineage',
+  'android_build_soong',
   'android_frameworks_base',
-  'android_build_soong'
+  'android_packages_apps_Settings',
+  'android_vendor_lineage'
   ]
 
 def resync_all():
