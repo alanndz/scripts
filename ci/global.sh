@@ -31,6 +31,7 @@
 # pendulum-10
 # proton-10
 # proton-11
+# proton-12
 #
 # USEGCC
 # 0
@@ -247,7 +248,7 @@ BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 
 makeZip
-sendZip
-sendLog
 sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")"
-sendStick "${BUILD_SUCCESS}"
+sendLog
+sendZip
+# sendStick "${BUILD_SUCCESS}"
