@@ -62,7 +62,7 @@ alias la='ls -CF'
 alias X='exit 0'
 
 # Git user
-[[ "$(git config --global user.name)" = "alanndz" ]] &&
+[[ ! "$(git config --global user.name)" = "alanndz" ]] &&
   git config --global user.name "alanndz" &&
   git config --global user.email "alanmahmud0@gmail.com"
 
