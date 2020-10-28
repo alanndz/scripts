@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+
+git config --global user.name "alanndz"
+git config --global user.email "alanmahmud0@gmail.com"
+git config --global core.editor "nano"
+
 function gitalias() {
     git config --global alias.s 'status'
     git config --global alias.p 'push'
