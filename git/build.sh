@@ -11,6 +11,8 @@ sudo apt install -y make libssl-dev libghc-zlib-dev libcurl4-gnutls-dev libexpat
 
 git clone https://github.com/git/git.git
 
+cd git
+
 make prefix=/usr/local all
 sudo make prefix=/usr/local install
 
