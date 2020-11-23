@@ -85,7 +85,7 @@ fi
 KERNELDIR=$PWD
 TOOLDIR="$KERNELDIR/.Tool"
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
-OUTDIR="${KERNELDIR}/.Out"
+OUTDIR="${KERNELDIR}/out"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
 
 if [ "$RELEASE_STATUS" = true ]; then
@@ -136,8 +136,7 @@ function exports {
 	export LOCALVERSION="-${KVERSION}"
 	if [ "$COMPILER_IS_CLANG" = true ]; then
 		export LD_LIBRARY_PATH="${CLANGDIR}/bin/../lib:$PATH"
-		PATH="${CLANGDIR}/bin:${PATH}"
-		export PATH
+		export PATH="${CLANGDIR}/bin:${PATH}"
 	fi
 }
 
