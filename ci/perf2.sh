@@ -203,7 +203,7 @@ function compile_gcc() {
 function compile_clang() {
 	make O="${OUTDIR}" "${CONFIG_FILE}"
 	make -j"$JOBS" O="$OUTDIR" \
-		ARCH=arm64
+		ARCH=arm64 \
 		CC=clang \
 		CROSS_COMPILE=aarch64-linux-gnu- \
 		CROSS_COMPILE_ARM32=arm-linux-gnueabi-
