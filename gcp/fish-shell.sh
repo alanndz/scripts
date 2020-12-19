@@ -38,5 +38,12 @@ echo "***** Setup git *******"
 wget -O- https://github.com/alanndz/scripts/raw/master/git/build.sh | sh
 wget -O- https://github.com/alanndz/scripts/raw/master/git/gitalias.sh | sh
 
+echo "***** Install fish shell and etc ******"
+sudo apt install -y fish tmux jq expect curl ccache wget
+curl -L https://get.oh-my.fish | fish
+
 echo "***** Install barom *******"
-wget -O- https://git.io/JkItH | sh
+wget -O- https://git.io/JkItH | bash
+
+echo "***** Install gdrive *****"
+wget -O- https://git.io/JkIq8 | bash
