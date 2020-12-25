@@ -87,7 +87,6 @@ TOOLDIR="$KERNELDIR/.Tool"
 ZIP_DIR="${TOOLDIR}/AnyKernel3"
 OUTDIR="${KERNELDIR}/out"
 IMAGE="${OUTDIR}/arch/arm64/boot/Image.gz-dtb"
-VENDOR_MODULEDIR="$ZIP_DIR/modules/vendor/lib/modules"
 
 if [ "$RELEASE_STATUS" = true ]; then
 	KVERSION="${CODENAME}-${RELEASE_VERSION}"
@@ -141,24 +140,6 @@ function exports {
 	fi
 }
 
-wifi_modules () {
-	STRIP="aarch64-linux-gnu-strip"
-	# credit @adekmaulana
-	for MODULES in $(find "$OUTDIR" -name '*.ko'); do
-		"${STRIP}" --strip-unneeded --strip-debug "${MODULES}"
-		"$OUTDIR/scripts/sign-file" sha512 \
-			"$OUTDIR/certs/signing_key.pem" \
-			"$OUTDIR/certs/signing_key.x509" \
-			"${MODULES}"
-		case ${MODULES} in
-			*/wlan.ko)
-				cp "${MODULES}" "${VENDOR_MODULEDIR}/qca_cld3_wlan.ko"
-				;;
-		esac
-	done
-	echo -e "(i) Done moving wifi modules"
-}
-
 function makeZip () {
 	make -C "$ZIP_DIR" clean &>/dev/null
 	if [ ! -f ${IMAGE} ]; then
@@ -169,7 +150,6 @@ function makeZip () {
 		sendStick "${BUILD_FAIL}"
         	exit 1;
 	fi
-	wifi_modules
 	echo "**** Copying zImage ****"
 	cp ${IMAGE} ${ZIP_DIR}
 	make -C "$ZIP_DIR" ZIP="${ZIP_NAME}" normal &>/dev/null
