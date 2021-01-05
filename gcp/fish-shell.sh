@@ -35,15 +35,13 @@ echo "***** Set Up my favorite theme *****"
 wget -O ~/.tmux.conf https://github.com/alanndz/scripts/raw/master/tmux/tmux.conf
 
 echo "***** Setup git *******"
-wget -O- https://github.com/alanndz/scripts/raw/master/git/build.sh | sh
-wget -O- https://github.com/alanndz/scripts/raw/master/git/gitalias.sh | sh
+curl -L https://github.com/alanndz/scripts/raw/master/git/build.sh | bash
+curl -L https://github.com/alanndz/scripts/raw/master/git/gitalias.sh | bash
 
 echo "***** Install fish shell and etc ******"
 sudo apt install -y fish tmux jq expect curl ccache wget
 curl -L https://get.oh-my.fish | fish
 
 echo "***** Install barom *******"
-wget -O- https://git.io/JkItH | bash
+curl -L https://git.io/JkItH | bash
 
-echo "***** Install gdrive *****"
-wget -O- https://git.io/JkIq8 | bash
