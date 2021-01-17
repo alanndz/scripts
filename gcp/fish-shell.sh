@@ -40,7 +40,7 @@ curl -L https://github.com/alanndz/scripts/raw/master/git/gitalias.sh | bash
 
 echo "***** Install fish shell and etc ******"
 sudo apt install -y fish tmux jq expect curl ccache wget
-curl -L https://get.oh-my.fish | fish
+wget -O- --no-check-certificate https://get.oh-my.fish | fish
 
 echo "***** Install barom *******"
 curl -L https://git.io/JkItH | bash
