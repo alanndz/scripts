@@ -116,6 +116,7 @@ function tool_clang {
 
 function compile_clang() {
 	make O="${OUTDIR}" "${CONFIG_FILE}"
+	make O="${OUTDIR}" savedefconfig	
 	make -j"$JOBS" O="$OUTDIR" \
 		ARCH=arm64 \
 		CC=clang \
