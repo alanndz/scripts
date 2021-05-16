@@ -101,7 +101,7 @@ if [[ $PUSH == "Y" ]] || [[ $PUSH == "y" ]]; then
     for REPO in $(cat success); do
         cd $REPO
         echo -e "Pushing $REPO ..."
-        git push -q $REMOTE_NAME "11-merge-${TAG}" &> /dev/null
+        git push -q -f $REMOTE_NAME "11-merge-${TAG}" &> /dev/null
         cd $ROM_PATH
     done
 fi
