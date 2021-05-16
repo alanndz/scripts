@@ -68,6 +68,7 @@ for REPO in $repos; do
             cd $REPO
             reset_branch
             git fetch -q $repo_url $TAG &> /dev/null
+            git branch -D "11-merge-${TAG}" &> /dev/null
             git checkout -b "11-merge-${TAG}" &> /dev/null
             if git merge FETCH_HEAD -q -m "Merge tag '$TAG' of $repo_url into $BRANCH" --signoff &> /dev/null; then
                 if [[ $(git rev-parse HEAD) != $(git rev-parse $REMOTE_NAME/$BRANCH) ]] && [[ $(git diff HEAD $REMOTE_NAME/$BRANCH) ]]; then
