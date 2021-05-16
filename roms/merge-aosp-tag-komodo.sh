@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script to merge latest AOSP tag in AOSP-LEGACY source
+# Script to merge latest AOSP tag in KomodoOS source
 # Can be adapted to other AOSP-based ROMs as well
 #
 # After completion, you'll get the following files in the ROM source dir:
@@ -68,6 +68,7 @@ for REPO in $repos; do
             cd $REPO
             reset_branch
             git fetch -q $repo_url $TAG &> /dev/null
+            git checkout -b "11-merge-${TAG}" &> /dev/null
             if git merge FETCH_HEAD -q -m "Merge tag '$TAG' of $repo_url into $BRANCH" --signoff &> /dev/null; then
                 if [[ $(git rev-parse HEAD) != $(git rev-parse $REMOTE_NAME/$BRANCH) ]] && [[ $(git diff HEAD $REMOTE_NAME/$BRANCH) ]]; then
                     echo "$REPO" >> $ROM_PATH/success
@@ -99,7 +100,7 @@ if [[ $PUSH == "Y" ]] || [[ $PUSH == "y" ]]; then
     for REPO in $(cat success); do
         cd $REPO
         echo -e "Pushing $REPO ..."
-        git push -q $REMOTE_NAME HEAD:$BRANCH &> /dev/null
+        git push -q $REMOTE_NAME "11-merge-${TAG}" &> /dev/null
         cd $ROM_PATH
     done
 fi
