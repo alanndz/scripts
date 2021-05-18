@@ -33,6 +33,8 @@ hardware/qcom/audio \
 hardware/qcom/bt \
 hardware/qcom/wlan \
 hardware/ril \
+vendor/komodo \
+packages/apps/KomodoSettings \
 prebuilts/r8"
 
 # Get merge tag from user
@@ -61,6 +63,7 @@ for REPO in $repos; do
     else
         case $REPO in
             build/make) repo_url="$AOSP/platform/build" ;;
+            packages/apps/KomodoIsland) repo_url="$AOSP/platform/packages/apps/Launcher3" ;;
             *) repo_url="$AOSP/platform/$REPO" ;; esac
 
         if wget -q --spider $repo_url; then
@@ -76,7 +79,9 @@ for REPO in $repos; do
                     echo "${grn}Merging $REPO succeeded :) $end"
                 else
                     echo "$REPO - unchanged"
-                    git reset --hard $REMOTE_NAME/$BRANCH &> /dev/null
+                    reset_branch
+                    git branch -D "11-merge-${TAG}" &> /dev/null
+#                    git reset --hard $REMOTE_NAME/$BRANCH &> /dev/null
                 fi
             else
                 echo "$REPO" >> $ROM_PATH/failed
