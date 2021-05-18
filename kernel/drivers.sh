@@ -32,9 +32,10 @@ function drivers()
   echo "${3}"
   git fetch "$2/$3" "${TAG}"
   if [[ -n ${INIT} ]]; then
-    git subtree add --prefix="${NAME}" FETCH_HEAD
+    #git merge -s ours --no-commit --allow-unrelated-histories FETCH_HEAD
+    git read-tree --prefix="${NAME}" -u FETCH_HEAD
     [[ $? -eq 1 ]] && { exit; }
-    git commit --amen -m "${PREFIX}: ${3}: Add from ${TAG}" -s
+    git commit -m "${PREFIX}: ${3}: Add from ${TAG}" -s
   elif [[ -n ${UPDATE} ]]; then
     git merge --no-edit -m "${PREFIX}: ${3}: Merge tag '${TAG}' into $(git rev-parse --abbrev-ref HEAD)"  \
               -m "$(git log --oneline --no-merges $(git branch | grep "\*" | sed 's/\* //')..FETCH_HEAD)" \
