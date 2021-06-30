@@ -30,7 +30,7 @@ fi
 
 # Setup environment
 KDIR=$(pwd)
-TC="../tc"
+TC="../tools"
 AK=${TC}/AnyKernel
 KERNEL_NAME="aLn"
 KERNEL_TYPE="EAS"
@@ -64,8 +64,9 @@ ZIP_NAME="${KERNEL_NAME}${CODENAME}-${DEVICE}-${ENDZ}.zip"
 LOG=$(echo ${ZIP_NAME} | sed "s/.zip/.log/")
 
 # Setup clang environment
-IMG="$KDIR/out/arch/arm64/boot/Image.gz-dtb"
+IMG="$KDIR/out/arch/arm64/boot/Image.gz"
 DTBO="$KDIR/out/arch/arm64/boot/dtbo.img"
+DTB="$KDIR/out/arch/arm64/boot/dts/qcom"
 export PATH="${TC}/clang/bin:$PATH"
 export LD_LIBRARY_PATH="${TC}/clang/lib:$LD_LIBRARY_PATH"
 export KBUILD_COMPILER_STRING="$("$TC"/clang/bin/clang --version | head -n 1 | perl -pe 's/\((?:http|git).*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//' -e 's/^.*clang/clang/')"
@@ -131,6 +132,7 @@ fi
 make -C ${AK} clean
 cp ${IMG} ${AK}
 cp ${DTBO} ${AK}
+find ${DTB} -name "*.dtb" -exec cat {} + > ${AK}/dtb
 make -C ${AK} ZIP="${ZIP_NAME}" normal
 
 push ${AK}/${ZIP_NAME}
