@@ -70,7 +70,7 @@ DTBO="$KDIR/out/arch/arm64/boot/dtbo.img"
 DTB="$KDIR/out/arch/arm64/boot/dts/qcom"
 export PATH="${TC}/clang/bin:$PATH"
 export LD_LIBRARY_PATH="${TC}/clang/lib:$LD_LIBRARY_PATH"
-export KBUILD_COMPILER_STRING="$("$TC"/clang/bin/clang --version | head -n 1 | perl -pe 's/\((?:http|git).*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//' -e 's/^.*clang/clang/')"
+export KBUILD_COMPILER_STRING=$("${TC}/clang/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 if [[ -n ${CLEAN} ]]; then
   make O=out mrproper 2>/dev/null
