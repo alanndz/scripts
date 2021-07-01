@@ -58,8 +58,9 @@ if [[ ! -d ${AK} ]]; then
 fi
 
 # Setup name
-ENDZ="$(git log --pretty=format:'%h' -1)-$(date "+%d%m%Y-%H%M")"
-KVERSION="${CODENAME}-${ENDZ}"
+GIT="$(git log --pretty=format:'%h' -1)"
+ENDZ="${GIT}-$(date "+%d%m%Y-%H%M")"
+KVERSION="${CODENAME}-${GIT}"
 ZIP_NAME="${KERNEL_NAME}${CODENAME}-${DEVICE}-${ENDZ}.zip"
 LOG=$(echo ${ZIP_NAME} | sed "s/.zip/.log/")
 
