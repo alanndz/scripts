@@ -16,6 +16,7 @@ while (( ${#} )); do
        "-n"|"--codename") shift; CODENAME="-${1}" ;;
        "-C"|"--directory") shift; DIR=${1} ;;
        "-D"|"--defconfig") shift; CONFIG=${1} ;;
+       "-e"|"--env") shift; ENV=${1} ;;
   esac
   shift
 done
@@ -63,6 +64,7 @@ ENDZ="${GIT}-$(date "+%d%m%Y-%H%M")"
 KVERSION="${CODENAME}-${GIT}"
 ZIP_NAME="${KERNEL_NAME}${CODENAME}-${DEVICE}-${ENDZ}.zip"
 LOG=$(echo ${ZIP_NAME} | sed "s/.zip/.log/")
+LOGE=$(echo ${ZIP_NAME} | sed "s/.zip/.error.log/")
 
 # Setup clang environment
 IMG="$KDIR/out/arch/arm64/boot/Image.gz"
@@ -70,30 +72,35 @@ DTBO="$KDIR/out/arch/arm64/boot/dtbo.img"
 DTB="$KDIR/out/arch/arm64/boot/dts/qcom"
 export PATH="${TC}/clang/bin:$PATH"
 export LD_LIBRARY_PATH="${TC}/clang/lib:$LD_LIBRARY_PATH"
-export KBUILD_COMPILER_STRING=$("${TC}/clang/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-
-if [[ -n ${CLEAN} ]]; then
-  make O=out mrproper 2>/dev/null
-  make O=out clean 2>/dev/null
-fi
+KBUILD_COMPILER_STRING=$("${TC}/clang/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 START=$(date +"%s")
 
-build_clang() {
+m() {
   make -j$(nproc --all) O=out \
                         ARCH=arm64 \
                         LOCALVERSION=${KVERSION} \
                         CC="clang" \
+                        LLVM=1 \
                         CLANG_TRIPLE=aarch64-linux-gnu- \
                         CROSS_COMPILE=aarch64-linux-gnu- \
-                        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+                        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                        ${ENV} \
+                        ${@}
 }
+
+if [[ -n ${CLEAN} ]]; then
+  m mrproper 2>/dev/null
+  m clean 2>/dev/null
+fi
 
 # Build kernel
 rm -rf ${IMG}
 rm -rf ${DTBO}
-make O=out ARCH=arm64 $CONFIG > /dev/null
-build_clang 2>&1 | tee out/${LOG}
+
+m $CONFIG > /dev/null
+m > >(tee out/${LOG}) 2> >(tee out/${LOGE} >&2)
+
 END=$(date +"%s")
 DIFF=$(($END - $START))
 
@@ -127,6 +134,7 @@ push() {
 if [[ ! -f ${IMG} || ! -f ${DTBO} ]]; then
   echo "Failed build!"
   push out/${LOG}
+  push out/${LOGE}
   exit 1
 fi
 
