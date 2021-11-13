@@ -17,6 +17,7 @@ while (( ${#} )); do
        "-C"|"--directory") shift; DIR=${1} ;;
        "-D"|"--defconfig") shift; CONFIG=${1} ;;
        "-e"|"--env") shift; ENV=${1} ;;
+       "-r"|"--regen") REGEN=true ;;
   esac
   shift
 done
@@ -51,6 +52,7 @@ if [[ ! -d ${TC}/clang ]]; then
   wget -O ${TC}/proton.tar.zst https://github.com/kdrag0n/proton-clang-build/releases/download/20200117/proton_clang-11.0.0-20200117.tar.zst
   mkdir -p ${TC}/clang
   tar -I zstd -xvf ${TC}/*.tar.zst -C ${TC}/clang --strip-components=1
+  #git clone --depth=1 -b master https://github.com/kdrag0n/proton-clang ${TC}/clang
 fi
 
 # AnyKernel3
@@ -88,6 +90,14 @@ m() {
                         ${ENV} \
                         ${@}
 }
+
+if [[ -n ${REGEN} ]]; then
+  m $CONFIG
+  m menuconfig
+  m savedefconfig
+  cp out/defconfig arch/arm64/configs/$CONFIG
+  exit 0
+fi
 
 if [[ -n ${CLEAN} ]]; then
   m mrproper 2>/dev/null
