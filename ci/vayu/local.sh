@@ -141,7 +141,7 @@ push() {
 		-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | #aLn | <b>vayu</b>"
 }
 
-if [[ ! -f ${IMG} || ! -f ${DTBO} ]]; then
+if [[ ! -f ${IMG} ]]; then
   echo "Failed build!"
   push out/${LOG}
   push out/${LOGE}
