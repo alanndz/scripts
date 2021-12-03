@@ -69,7 +69,7 @@ LOG=$(echo ${ZIP_NAME} | sed "s/.zip/.log/")
 LOGE=$(echo ${ZIP_NAME} | sed "s/.zip/.error.log/")
 
 # Setup clang environment
-IMG="$KDIR/out/arch/arm64/boot/Image.gz"
+IMG="$KDIR/out/arch/arm64/boot/Image"
 DTBO="$KDIR/out/arch/arm64/boot/dtbo.img"
 DTB="$KDIR/out/arch/arm64/boot/dts/qcom"
 export PATH="${TC}/clang/bin:$PATH"
@@ -77,6 +77,10 @@ export LD_LIBRARY_PATH="${TC}/clang/lib:$LD_LIBRARY_PATH"
 KBUILD_COMPILER_STRING=$("${TC}/clang/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 START=$(date +"%s")
+
+disable_lto() {
+  scripts/config --file out/.config -e CONFIG_THINLTO
+}
 
 m() {
   make -j$(nproc --all) O=out \
@@ -109,6 +113,7 @@ rm -rf ${IMG}
 rm -rf ${DTBO}
 
 m $CONFIG > /dev/null
+disable_lto
 m > >(tee out/${LOG}) 2> >(tee out/${LOGE} >&2)
 
 END=$(date +"%s")
