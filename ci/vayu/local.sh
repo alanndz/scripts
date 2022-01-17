@@ -32,7 +32,7 @@ fi
 
 # Setup environment
 KDIR=$(pwd)
-TC="../tools"
+TC="${KDIR}/../tools"
 AK=${TC}/AnyKernel
 KERNEL_NAME="aLn"
 KERNEL_TYPE="EAS"
@@ -40,22 +40,18 @@ PHONE="Poco X3 Pro"
 DEVICE="vayu"
 CONFIG=${CONFIG:-vayu_defconfig}
 CODENAME=${CODENAME:--Testing}
-CHAT_ID="" #
+CHAT_ID=""
 TOKEN=""
 DEVELOPER="alanndz"
 HOST="noob_vayu-dev"
 AK_BRANCH="vayu"
 
-# Proton 11
-if [[ ! -d ${TC}/clang ]]; then
-  mkdir -p ${TC}
-  wget -O ${TC}/proton.tar.zst https://github.com/kdrag0n/proton-clang-build/releases/download/20200117/proton_clang-11.0.0-20200117.tar.zst
-  mkdir -p ${TC}/clang
-  tar -I zstd -xvf ${TC}/*.tar.zst -C ${TC}/clang --strip-components=1
-  #git clone --depth=1 -b master https://github.com/kdrag0n/proton-clang ${TC}/clang
+if [[ ! -d $TC/clang || ! -d $TC/gcc64 || ! -d $TC/gcc32 ]]; then
+  git clone https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 --depth=1 -b master $TC/clang
+  git clone https://github.com/mvaisakh/gcc-arm64 --depth=1 $TC/gcc64
+  git clone https://github.com/mvaisakh/gcc-arm --depth=1 $TC/gcc32
 fi
 
-# AnyKernel3
 if [[ ! -d ${AK} ]]; then
   git clone https://github.com/alanndz/AnyKernel3 -b $AK_BRANCH ${AK}
 fi
@@ -72,9 +68,18 @@ LOGE=$(echo ${ZIP_NAME} | sed "s/.zip/.error.log/")
 IMG="$KDIR/out/arch/arm64/boot/Image"
 DTBO="$KDIR/out/arch/arm64/boot/dtbo.img"
 DTB="$KDIR/out/arch/arm64/boot/dts/qcom"
-export PATH="${TC}/clang/bin:$PATH"
-export LD_LIBRARY_PATH="${TC}/clang/lib:$LD_LIBRARY_PATH"
-KBUILD_COMPILER_STRING=$("${TC}/clang/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+CL="$TC/clang/clang-r437112b"
+export PATH="${CL}/bin:${TC}/gcc64/bin:${TC}/gcc32/bin:$PATH"
+export LD_LIBRARY_PATH="${CL}/lib:$LD_LIBRARY_PATH"
+KBUILD_COMPILER_STRING=$("${CL}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+
+#echo $(which clang)
+#echo $(which aarch64-elf-gcc)
+#echo $(which arm-eabi-gcc-12.0.0)
+#echo $PATH
+#echo $KBUILD_COMPILER_STRING
+
+#exit
 
 START=$(date +"%s")
 
@@ -82,15 +87,29 @@ disable_lto() {
   scripts/config --file out/.config -e CONFIG_THINLTO
 }
 
+enable_dtbo() {
+  scripts/config --file out/.config -e CONFIG_BUILD_ARM64_DTBO_IMG
+}
+
+xcache() {
+  export CCACHE_EXEC=$(which ccache)
+  export USE_CCACHE=1
+  export CCACHE_DIR=$KDIR/.ccache
+  ccache -M 20G >/dev/null
+  # ccache -o compression=true
+}
+
+xcache
+
 m() {
   make -j$(nproc --all) O=out \
                         ARCH=arm64 \
                         LOCALVERSION=${KVERSION} \
-                        CC="clang" \
+                        CC="ccache clang" \
                         LLVM=1 \
-                        CLANG_TRIPLE=aarch64-linux-gnu- \
-                        CROSS_COMPILE=aarch64-linux-gnu- \
-                        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                        CLANG_TRIPLE=aarch64-elf- \
+                        CROSS_COMPILE=aarch64-elf- \
+                        CROSS_COMPILE_ARM32=arm-eabi- \
                         ${ENV} \
                         ${@}
 }
@@ -114,6 +133,7 @@ rm -rf ${DTBO}
 
 m $CONFIG > /dev/null
 disable_lto
+enable_dtbo
 m > >(tee out/${LOG}) 2> >(tee out/${LOGE} >&2)
 
 END=$(date +"%s")
