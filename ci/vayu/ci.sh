@@ -9,22 +9,6 @@
 
 export TZ=":Asia/Makassar"
 
-while (( ${#} )); do
-  case ${1} in
-       "-c"|"--clean") CLEAN=true ;;
-       "-d"|"--dirty") DIRTY=true ;;
-       "-n"|"--codename") shift; CODENAME="-${1}" ;;
-       "-C"|"--directory") shift; DIR=${1} ;;
-       "-D"|"--defconfig") shift; CONFIG=${1} ;;
-       "-e"|"--env") shift; ENV=${1} ;;
-       "-r"|"--regen") REGEN=true ;;
-  esac
-  shift
-done
-
-if [[ -n ${DIR} ]]; then
-  cd ${DIR}
-fi
 if [[ ! -f Makefile ]]; then
   echo "This not in rootdir kernel, please check directory again"
   exit 1
@@ -39,7 +23,7 @@ KERNEL_TYPE="EAS"
 PHONE="Poco X3 Pro"
 DEVICE="vayu"
 CONFIG=${CONFIG:-vayu_defconfig}
-CODENAME=${CODENAME:--Testing}
+CODENAME="-${CODENAME:--Testing}"
 CHAT_ID="${TELE_ID}"
 TOKEN="${TELE_TOKEN}"
 DEVELOPER="alanndz"
@@ -73,14 +57,6 @@ export PATH="${CL}/bin:${TC}/gcc64/bin:${TC}/gcc32/bin:$PATH"
 export LD_LIBRARY_PATH="${CL}/lib:$LD_LIBRARY_PATH"
 KBUILD_COMPILER_STRING=$("${CL}/bin/clang" --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
-#echo $(which clang)
-#echo $(which aarch64-elf-gcc)
-#echo $(which arm-eabi-gcc-12.0.0)
-#echo $PATH
-#echo $KBUILD_COMPILER_STRING
-
-#exit
-
 START=$(date +"%s")
 
 disable_lto() {
@@ -104,25 +80,10 @@ m() {
                         ${@}
 }
 
-if [[ -n ${REGEN} ]]; then
-  m $CONFIG
-  m menuconfig
-  m savedefconfig
-  cp out/defconfig arch/arm64/configs/$CONFIG
-  exit 0
-fi
-
-if [[ -n ${CLEAN} ]]; then
-  m mrproper 2>/dev/null
-  m clean 2>/dev/null
-fi
-
-# Build kernel
-rm -rf ${IMG}
-rm -rf ${DTBO}
-
 m $CONFIG > /dev/null
-disable_lto
+if [[ -z ${DISABLE_LTO} ]]; then
+  disable_lto
+fi
 enable_dtbo
 m > >(tee out/${LOG}) 2> >(tee out/${LOGE} >&2)
 
