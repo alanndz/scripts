@@ -91,21 +91,11 @@ enable_dtbo() {
   scripts/config --file out/.config -e CONFIG_BUILD_ARM64_DTBO_IMG
 }
 
-xcache() {
-  export CCACHE_EXEC=$(which ccache)
-  export USE_CCACHE=1
-  export CCACHE_DIR=$KDIR/.ccache
-  ccache -M 20G >/dev/null
-  # ccache -o compression=true
-}
-
-xcache
-
 m() {
   make -j$(nproc --all) O=out \
                         ARCH=arm64 \
                         LOCALVERSION=${KVERSION} \
-                        CC="ccache clang" \
+                        CC="clang" \
                         LLVM=1 \
                         CLANG_TRIPLE=aarch64-elf- \
                         CROSS_COMPILE=aarch64-elf- \
