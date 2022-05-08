@@ -17,6 +17,7 @@ while (( ${#} )); do
        "-u"|"--update") UPDATE=true ;;
        "-C"|"--dir") shift; DIRS=${1} ;;
        "-e"|"--exfat") EXFAT=true ;;
+       "-g"|"--wireguard") WIREGUARD=true ;;
   esac
   shift
 done
@@ -37,6 +38,9 @@ function drivers()
      NAME="$1/$3"
   elif [[ $4 == "fs" ]]; then
      PREFIX=fs
+     NAME=$1
+  elif [[ $4 == "wireguard" ]]; then
+     PREFIX=net
      NAME=$1
   else
      PREFIX=techpack
@@ -88,6 +92,13 @@ if [[ -n ${EXFAT} ]]; then
   REPO_EXFAT=( "exfat-linux" )
   URL_EXFAT=https://github.com/arter97
   drivers $SUBFOLDER_EXFAT $URL_EXFAT $REPO_EXFAT fs
+fi
+
+if [[ -n ${WIREGUARD} ]]; then
+  SUBFOLDER_WG=net/wireguard
+  REPO_WG=( "wireguard-linux-compat" )
+  URL_WG=https://git.zx2c4.com
+  drivers $SUBFOLDER_WG $URL_WG $REPO_WG wireguard
 fi
 
 [[ -n ${DIRS} ]] && { echo "Entering ${cwd}"; cd ${cwd}; }
