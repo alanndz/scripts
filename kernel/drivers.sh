@@ -62,7 +62,7 @@ function drivers()
 
 if [[ -n ${WLAN} ]]; then
   SUBFOLDER_WLAN=drivers/staging
-  URL_WLAN=https://source.codeaurora.org/quic/la/platform/vendor/qcom-opensource/wlan
+  URL_WLAN=https://git.codelinaro.org/clo/la/platform/vendor/qcom-opensource/wlan
   if [[ -z ${PRIMA} ]]; then
     REPOS_WLAN=( "fw-api" "qcacld-3.0" "qca-wifi-host-cmn" )
   else
@@ -76,14 +76,14 @@ fi
 if [[ -n ${AUDIO} ]]; then
   SUBFOLDER_AUDIO=techpack/audio
   REPO_AUDIO=( "audio-kernel" )
-  URL_AUDIO=https://source.codeaurora.org/quic/la/platform/vendor/opensource
+  URL_AUDIO=https://git.codelinaro.org/clo/la/platform/vendor/opensource
   drivers $SUBFOLDER_AUDIO $URL_AUDIO $REPO_AUDIO
 fi
 
 if [[ -n ${DATA} ]]; then
   SUBFOLDER_DATA=techpack/data
   REPO_DATA=( "data-kernel" )
-  URL_DATA=https://source.codeaurora.org/quic/la/platform/vendor/qcom-opensource
+  URL_DATA=https://git.codelinaro.org/clo/la/platform/vendor/qcom-opensource
   drivers $SUBFOLDER_DATA $URL_DATA $REPO_DATA
 fi
 
