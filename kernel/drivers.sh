@@ -26,6 +26,12 @@ done
 [[ -n ${DIRS} ]] && {
   echo "Entering ${DIRS}"
   cd ${DIRS}
+  cwd=$(pwd)
+}
+
+[[ ! -f Makefile ]] && {
+  echo "Error: Makefile not found, enter kernel root first or define with -C argument!"
+  exit 1
 }
 
 [[ -n ${INIT} && -n ${UPDATE} ]] && { echo "Both init and update were specified!"; exit; }
@@ -50,7 +56,9 @@ function drivers()
      PREFIX=techpack
      NAME=$1
   fi
-  echo "${3}"
+
+  echo "Fetching $2/$3 ${TAG}"
+
   git fetch "$2/$3" "${TAG}"
   if [[ -n ${INIT} ]]; then
     #git merge -s ours --no-commit --allow-unrelated-histories FETCH_HEAD
@@ -113,7 +121,7 @@ if [[ -n ${KSU} ]]; then
   cd drivers
   ln -sf "../KernelSU/kernel" "kernelsu"
   git add kernelsu && git commit -m "drivers: kernelsu: Link to KernelSU"
-  cd ${DIRS}
+  cd ${cwd}
 fi
 
 [[ -n ${DIRS} ]] && { echo "Entering ${cwd}"; cd ${cwd}; }
