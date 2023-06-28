@@ -114,14 +114,11 @@ if [[ -n ${WIREGUARD} ]]; then
 fi
 
 if [[ -n ${KSU} ]]; then
-  SUBFOLDER_KSU=KernelSU
+  SUBFOLDER_KSU=drivers/staging/kernelsu
   REPO_KSU=( "KernelSU" )
   URL_KSU=https://github.com/tiann
   drivers $SUBFOLDER_KSU $URL_KSU $REPO_KSU kernelsu
-  cd drivers
-  ln -sf "../KernelSU/kernel" "kernelsu"
-  git add kernelsu && git commit -m "drivers: kernelsu: Link to KernelSU"
-  cd ${cwd}
+
 fi
 
 [[ -n ${DIRS} ]] && { echo "Entering ${cwd}"; cd ${cwd}; }
