@@ -13,6 +13,7 @@ while (( ${#} )); do
        "-w"|"--wlan") WLAN=true ;;
        "-p"|"--prima") PRIMA=true ;;
        "-d"|"--data") DATA=true ;;
+       "-k"|"--kernelsu") KSU=true ;;
        "-t"|"--tag") shift; TAG=${1} ;;
        "-u"|"--update") UPDATE=true ;;
        "-C"|"--dir") shift; DIRS=${1} ;;
@@ -41,6 +42,9 @@ function drivers()
      NAME=$1
   elif [[ $4 == "wireguard" ]]; then
      PREFIX=net
+     NAME=$1
+  elif [[ $4 == "kernelsu" ]]; then
+     PREFIX=drivers
      NAME=$1
   else
      PREFIX=techpack
@@ -99,6 +103,17 @@ if [[ -n ${WIREGUARD} ]]; then
   REPO_WG=( "wireguard-linux-compat" )
   URL_WG=https://git.zx2c4.com
   drivers $SUBFOLDER_WG $URL_WG $REPO_WG wireguard
+fi
+
+if [[ -n ${KSU} ]]; then
+  SUBFOLDER_KSU=KernelSU
+  REPO_KSU=( "KernelSU" )
+  URL_KSU=https://github.com/tiann
+  drivers $SUBFOLDER_KSU $URL_KSU $REPO_KSU kernelsu
+  cd drivers
+  ln -sf "../KernelSU/kernel" "kernelsu"
+  git add kernelsu && git commit -m "drivers: kernelsu: Link to KernelSU"
+  cd ${DIRS}
 fi
 
 [[ -n ${DIRS} ]] && { echo "Entering ${cwd}"; cd ${cwd}; }
